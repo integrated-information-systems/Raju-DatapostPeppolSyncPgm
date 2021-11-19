@@ -1412,14 +1412,17 @@ namespace PEPPOLSyncProgram
                     xmlNameSpace.Add("xsd", Invoice.xsdNameSpace);
 
 
+                    string strInvoiceXMLPath = ConfigurationManager.AppSettings["InvoiceXMLPath"];
 
                     XmlSerializer serializer = new XmlSerializer(typeof(Invoice));
-                    TextWriter writer = new StreamWriter(@"D:\invoicexml.xml");
+                    //TextWriter writer = new StreamWriter(@"D:\invoicexml.xml");
+                    TextWriter writer = new StreamWriter(strInvoiceXMLPath);
                     serializer.Serialize(writer, invoiceDocument, xmlNameSpace);
                     writer.Close();
 
 
-                    string filePath = @"D:\invoicexml.xml";
+                    //string filePath = @"D:\invoicexml.xml";
+                    string filePath = strInvoiceXMLPath;
                     var t = Task.Run(() => uploadFileAsync("peppol-invoice-2", "invoices", filePath));
 
                     t.Wait();

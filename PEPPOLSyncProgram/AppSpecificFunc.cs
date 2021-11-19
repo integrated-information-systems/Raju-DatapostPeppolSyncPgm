@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
+using System.Configuration;
 
 namespace PEPPOLSyncProgram
 {
@@ -66,10 +67,16 @@ namespace PEPPOLSyncProgram
         {
             try
             {
+                string strSMTP_Server = ConfigurationManager.AppSettings["SMTP_Server"];
+                string strSMTP_NC_User = ConfigurationManager.AppSettings["SMTP_NC_User"];
+                string strSMTP_NC_Password = ConfigurationManager.AppSettings["SMTP_NC_Password"];
+                string strFrom = ConfigurationManager.AppSettings["From"];
+                string strCC_ApprovalEmail = ConfigurationManager.AppSettings["CC_ApprovalEmail"];
+
                 MailMessage mailMessage = new MailMessage();
                 mailMessage.To.Add(customerRegistration.AuthorizedPersonnelEmail);
-                mailMessage.CC.Add("william.lee@integratedinfosystem.com");
-                mailMessage.From = new MailAddress("iismediafire@gmail.com");
+                mailMessage.CC.Add(strCC_ApprovalEmail);
+                mailMessage.From = new MailAddress(strFrom);
                 mailMessage.Subject = "Mail from PEPPOL Customer Registration Portal";
                 mailMessage.Body = "Hi " + FirstCharToUpper(customerRegistration.AuthorizedPersonnelName) + ", <br/>" +
                                    "<p>Your PEPPOL registration completed, Successfully.<p>" +
@@ -77,11 +84,11 @@ namespace PEPPOLSyncProgram
                                    "<p>PEPPOL ID:" + PEPPOLID;
                 mailMessage.IsBodyHtml = true;
 
-                SmtpClient smtpClient = new SmtpClient("smtp.gmail.com");
+                SmtpClient smtpClient = new SmtpClient(strSMTP_Server);
                 smtpClient.Port = 587;
                 smtpClient.UseDefaultCredentials = false;
                 smtpClient.EnableSsl = true;
-                NetworkCredential nc = new NetworkCredential("iismediafire@gmail.com", "99@lokyang");
+                NetworkCredential nc = new NetworkCredential(strSMTP_NC_User, strSMTP_NC_Password);
                 smtpClient.Credentials = nc;
                 smtpClient.Send(mailMessage);
             }
@@ -94,10 +101,17 @@ namespace PEPPOLSyncProgram
         {
             try
             {
-                if(!ToEmail.Equals(string.Empty) && !InvoiceNo.Equals(string.Empty)) { 
+
+                string strSMTP_Server = ConfigurationManager.AppSettings["SMTP_Server"];
+                string strSMTP_NC_User = ConfigurationManager.AppSettings["SMTP_NC_User"];
+                string strSMTP_NC_Password = ConfigurationManager.AppSettings["SMTP_NC_Password"];
+                string strFrom = ConfigurationManager.AppSettings["From"];
+                
+
+                if (!ToEmail.Equals(string.Empty) && !InvoiceNo.Equals(string.Empty)) { 
                     MailMessage mailMessage = new MailMessage();
                     mailMessage.To.Add(ToEmail);                
-                    mailMessage.From = new MailAddress("iismediafire@gmail.com");
+                    mailMessage.From = new MailAddress(strFrom);
                     mailMessage.Subject = "New " + DocType + " from "  + CompanyName;
                     mailMessage.Body = "Dear Customer, <br/>" +
                                        "<p>You have a New " + DocType + ", " + DocType + " No:" + InvoiceNo +
@@ -105,11 +119,11 @@ namespace PEPPOLSyncProgram
                                        "<br/><br/>Thanks & Regard,<br/><br/>Invoicing Team";  
                     mailMessage.IsBodyHtml = true;
 
-                    SmtpClient smtpClient = new SmtpClient("smtp.gmail.com");
+                    SmtpClient smtpClient = new SmtpClient(strSMTP_Server);
                     smtpClient.Port = 587;
                     smtpClient.UseDefaultCredentials = false;
                     smtpClient.EnableSsl = true;
-                    NetworkCredential nc = new NetworkCredential("iismediafire@gmail.com", "99@lokyang");
+                    NetworkCredential nc = new NetworkCredential(strSMTP_NC_User, strSMTP_NC_Password);
                     smtpClient.Credentials = nc;
                     smtpClient.Send(mailMessage);
                 }
